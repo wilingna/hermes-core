@@ -5,7 +5,6 @@ A context-routing layer that sits between two AI agents.
 Usage:
     python hermes.py "<previous agent output>" "<next step goal>"
 """
-
 import os
 import sys
 from openai import OpenAI
@@ -35,13 +34,20 @@ Next step goal:
 \"\"\"{goal}\"\"\"
 """
 
-
-def hermes(prev_output: str, next_goal: str, model: str = "gpt-4o-mini") -> str:
+def hermes(prev_output: str, next_goal: str, model: str = None) -> str:
     """Run a Hermes handoff between two agents."""
-    client = OpenAI(
-        api_key=os.getenv("OPENAI_API_KEY") or os.getenv("OPENROUTER_API_KEY"),
-        base_url=os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1"),
+    api_key = os.getenv("OPENAI_API_KEY") or os.getenv("OPENROUTER_API_KEY")
+    if not api_key:
+        raise RuntimeError("Please set OPENAI_API_KEY or OPENROUTER_API_KEY")
+
+    base_url = os.getenv("OPENAI_BASE_URL") or (
+        "https://openrouter.ai/api/v1"
+        if os.getenv("OPENROUTER_API_KEY") and not os.getenv("OPENAI_API_KEY")
+        else "https://api.openai.com/v1"
     )
+    model = model or os.getenv("HERMES_MODEL", "gpt-4o-mini")
+
+    client = OpenAI(api_key=api_key, base_url=base_url)
     resp = client.chat.completions.create(
         model=model,
         messages=[
