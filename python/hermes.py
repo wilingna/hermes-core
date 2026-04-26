@@ -1,11 +1,10 @@
 def hermes_process(content):
-prompt = f"""
+    prompt = f"""
 You are a Hermes Agent.
 
 Transform the following content into structured input for the next AI step.
 
 Tasks:
-
 * Compress
 * Normalize
 * Preserve intent
@@ -14,4 +13,6 @@ Tasks:
 Content:
 {content}
 """
-return prompt
+
+    # Replace this with your LLM call (OpenAI, Claude, etc.)
+    return prompt
