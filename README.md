@@ -63,6 +63,14 @@ Hermes ensures each step receives:
 
 ---
 
+## 🚀 Quick Start
+
+1. Take the output from any AI step  
+2. Apply Hermes Prompt  
+3. Pass the result to the next AI  
+
+That’s it.
+
 ## 🧩 Hermes Prompt (Universal)
 
 Use this between any two agents:
