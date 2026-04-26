@@ -1,5 +1,8 @@
 # 🚀 Hermes Core
 
+> Most people build agents.  
+> Very few build the system between them.
+
 A lightweight context-routing layer for multi-agent AI workflows
 
 ---
