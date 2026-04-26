@@ -6,7 +6,7 @@ Structure → Writing → Slides
 
 With Hermes:
 
-Structure → Hermes → Writing → Hermes → Slides
+NotebookLM → Hermes → Claude → Gamma
 
 Result:
 
