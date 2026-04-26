@@ -189,7 +189,7 @@ Hermes 不是替代品,是**正交的一层**。
 - 🏭 [ai-content-pipeline](https://github.com/wilingna/ai-content-pipeline) — 7 Agent 自动跑内容生产
 - 📊 [PPTFlux](https://github.com/wilingna/PPTFlux) — 4 Agent 把乱资料变成可演示 PPT
 - 🧠 [ai-decision-5steps](https://github.com/wilingna/ai-decision-5steps) — 5 个 AI 工具做高质量决策
-- 🛠 [ai-ppt-toolkit](https://github.com/wilingna/ai-ppt-toolkit) — 三件套做 PPT 完整工作流(49 ⭐)
+- 🛠 [ai-ppt-toolkit](https://github.com/wilingna/ai-ppt-toolkit) — 三件套做 PPT 完整工作流(49)
 
 ## 🔓 License
 
