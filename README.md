@@ -53,9 +53,16 @@ Hermes Core 是一个**轻量级 context-routing 层**,坐在两个 AI agent 之
 4. **转交**——给一个明确的 Next Step Instruction
 
 > 💡 **关于"Hermes"这个名字**
+>
 > Hermes 在希腊神话里是众神的信使,负责在不同世界之间传递信息。
 > 把这个比喻用到 AI agent 协作上,不是我首创的——社区里早有人提过类似的"messenger / router"思路。
 > 我做的不是发明这个概念,而是**把它产品化**:抽出一段可复用的 prompt、一个 30 行的最小实现、几个真实跑通的案例,让任何人 5 分钟就能用上。
+>
+> **⚠️ 不要和 Nous Research 的 hermes-agent 搞混**
+> AI 圈已经有一个非常知名的同名项目 [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent)(20k+ stars),那是一个完整的 self-improving agent 框架,有 skills、memory、多平台 gateway 一整套。
+> 我这个 `hermes-core` 是**完全不同的东西**——不是 agent 框架,而是夹在两个 agent 之间的**一层最小胶水**。
+> 如果你要找的是"独立运行的智能 agent",请去 Nous 那边;
+> 如果你要的是"让多个 AI 之间不掉棒的最小翻译层",留下来。
 
 ---
 
