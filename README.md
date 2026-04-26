@@ -1,94 +1,82 @@
 # 🚀 Hermes Core
 
-> Most people build agents.  
-> Very few build the system between them.
+> AI 接力赛里的"翻译官"——让多个 AI 之间不掉棒的最小中间层。
 
-A lightweight context-routing layer for multi-agent AI workflows
+大部分 AI 工作流不是死在模型不行,是死在 **Agent A 的输出,Agent B 根本不会用**。
+Hermes 就是塞在两个 AI 中间的那一层,负责压缩、对齐、加约束、转交。
 
----
-
-## 🧠 What is Hermes?
-
-Hermes Core is a simple but powerful idea:
-
-> AI systems don’t fail because models are weak.
-> They fail because outputs don’t transfer well between steps.
-
-Hermes sits between agents, ensuring:
-
-* structured handoff
-* stable intent
-* consistent outputs
-* reduced randomness
+一段 prompt + 30 行代码,今天就能用。
 
 ---
 
-## ⚠️ The Problem
+## 📺 30 秒看懂:有没有 Hermes 的差别
 
-Most AI workflows look like this:
+**场景**:让 Agent A 总结一段会议纪要,然后让 Agent B 基于总结写 PPT 大纲。
 
-```text
-Agent A → Agent B → Agent C
+### ❌ 不加 Hermes(直接把 A 的输出丢给 B)
+
+Agent A 输出:
+```
+这次会议大家讨论了很多内容,首先 CEO 提到了 Q3 业绩不太理想,
+特别是华东区下滑明显,然后市场部说预算被砍了 30%,产品部回应
+说新版本可能要延期,大家最后讨论了要不要裁撤 SaaS 业务线,
+但没有结论,我觉得整体氛围还是比较紧张的……
 ```
 
-But in reality:
+Agent B 拿到这段后写出来的 PPT:**主线散、重点乱、每页讲什么完全靠猜**。
 
-* context gets lost
-* structure drifts
-* intent changes
-* outputs become unpredictable
+### ✅ 加上 Hermes(中间过一道结构化 handoff)
 
----
-
-## ✅ The Solution
-
-Add a Hermes layer between steps:
-
-```text
-Agent A → Hermes → Agent B → Hermes → Agent C
+Hermes 把 A 的输出转成:
+```yaml
+[Goal]      为高管做 10 分钟决策汇报
+[Audience]  CEO + 业务负责人
+[Core]      Q3 业绩压力 → SaaS 业务线去留待决
+[Structure] 1.业绩现状  2.压力来源  3.三条路径  4.建议
+[Constraints] 每页一个观点 / 不出现"整体氛围"等模糊词
+[Next Step] 基于以上结构,生成 4 页 PPT 大纲
 ```
 
-Hermes ensures each step receives:
+Agent B 拿到这段后写出来的 PPT:**结构稳、重点准、可以直接讲**。
 
-* the right structure
-* the right constraints
-* the right intent
+差别不在模型,在中间这一层。
 
 ---
 
-## 🔥 Core Concept
+## 🧠 Hermes 是什么
 
-> Hermes is not another tool.
-> It is the translation layer between AI agents.
+Hermes Core 是一个**轻量级 context-routing 层**,坐在两个 AI agent 之间,做四件事:
+
+1. **压缩**——去掉冗余、口水、解释性废话
+2. **对齐**——把上一步输出的结构,改成下一步能直接消费的结构
+3. **加约束**——告诉下一个 agent 边界在哪(字数、口吻、禁忌词)
+4. **转交**——给一个明确的 Next Step Instruction
+
+> 💡 **关于"Hermes"这个名字**
+> Hermes 在希腊神话里是众神的信使,负责在不同世界之间传递信息。
+> 把这个比喻用到 AI agent 协作上,不是我首创的——社区里早有人提过类似的"messenger / router"思路。
+> 我做的不是发明这个概念,而是**把它产品化**:抽出一段可复用的 prompt、一个 30 行的最小实现、几个真实跑通的案例,让任何人 5 分钟就能用上。
 
 ---
 
-## 🚀 Quick Start
+## ⚡ 5 分钟 Quick Start(真的能跑)
 
-1. Take the output from any AI step  
-2. Apply Hermes Prompt  
-3. Pass the result to the next AI  
+### 方式 A:零代码,直接用 Prompt(适合小白)
 
-That’s it.
+复制下面这段 prompt,粘贴到 ChatGPT / Claude / Gemini 任意一个里:
 
-## 🧩 Hermes Prompt (Universal)
+```
+你是一个 Hermes Agent。
+你的任务是:把上一步 AI 的输出,转换成下一步 AI 可以直接使用的结构化输入。
 
-Use this between any two agents:
+请按以下步骤处理:
+1. 压缩信息(去掉冗余和口水)
+2. 标准化结构(让格式统一)
+3. 保留核心意图(不要篡改原意)
+4. 添加约束(给下一步明确边界)
+5. 准备 handoff(让下一步可以直接消费)
 
-```text
-You are a Hermes Agent.
-
-Your job is to transform the output of one AI step into a clean, structured input for the next AI.
-
-Tasks:
-1. Compress information (remove redundancy)
-2. Normalize structure (make it consistent)
-3. Preserve core intent (do not change meaning)
-4. Add constraints (guide the next step)
-5. Prepare for handoff (make it directly usable)
-
-Output format:
-
+输出必须是以下格式:
 [Goal]
 [Audience]
 [Core Content]
@@ -96,72 +84,94 @@ Output format:
 [Constraints]
 [Next Step Instruction]
 
-Content:
-{{paste previous output}}
+待处理的内容:
+{{把上一个 AI 的输出粘贴在这里}}
 ```
 
----
+把 `{{...}}` 换成你的真实内容,运行,你就拿到了一个干净的 handoff,可以直接喂给下一个 AI。
 
-## 📦 Example 1 — PPT Workflow
+### 方式 B:30 行代码版(适合工程师)
 
-Without Hermes:
-
-```text
-Structure → Writing → Slides
+```bash
+git clone https://github.com/wilingna/hermes-core
+cd hermes-core
+export OPENAI_API_KEY=sk-...   # 或 OPENROUTER_API_KEY
+python hermes.py "你的上一步 AI 输出" "下一步要做什么"
 ```
 
-With Hermes:
-
-```text
-Structure → Hermes → Writing → Hermes → Slides
-```
+`hermes.py` 的实现见仓库根目录,30 行,无依赖(除了 `openai` SDK)。
 
 ---
 
-## 📦 Example 2 — Content Creation
+## 🧩 什么时候用 Hermes / 什么时候别用
 
-```text
-Topic → Hermes → Script → Hermes → Multi-platform content
-```
+**该用**:
+- 输出要传给另一个 agent(尤其换了模型/换了任务类型)
+- 你发现工作流"第三步开始翻车"
+- 多个 AI 协作,但每次结果都不稳定
 
----
-
-## 📦 Example 3 — Decision System
-
-```text
-Research → Hermes → Strategy → Hermes → Report
-```
+**别用**:
+- 同一个 agent 内部的反复打磨(rewrite → rewrite)
+- 单步生成就能搞定的简单任务
+- 你的整个流程只有一个 AI
 
 ---
 
-## 🧠 When to Use Hermes
+## 🔬 Hermes vs LangChain vs MCP(给科技党)
 
-Use Hermes when:
+经常有人问:"这玩意儿和 LangChain / MCP / A2A 是什么关系?"
 
-* output is passed to another agent
-* task type changes (structure → writing, analysis → report)
-* you need consistency
-* you want predictable results
+| | 解决的问题 | 形态 | 心智负担 |
+|---|---|---|---|
+| **LangChain / LlamaIndex** | 编排 agent、管 chain、接工具 | 框架 | 高(要学 API) |
+| **MCP / A2A 协议** | 不同 agent / 工具之间的通信标准 | 协议 | 高(要实现 server) |
+| **Hermes** | 两个 agent 之间的**语义转交** | 一段 prompt + 30 行胶水 | 极低(复制粘贴) |
 
----
-
-## ❌ When NOT to Use Hermes
-
-* same-type refinement (rewrite → rewrite)
-* single-step generation
-* simple tasks
+Hermes 不是替代品,是**正交的一层**。
+你完全可以在 LangChain 里把 Hermes 当成一个 node,也可以在 MCP server 之间夹一层 Hermes。
+它是"无论你用什么框架,两个 AI 之间都需要的那道翻译"。
 
 ---
 
-## 🚀 Why it matters
+## 🏭 Case Study:Hermes 不是空想,是从真项目里抽出来的
 
-> AI is not limited by generation.
-> It is limited by collaboration.
+我自己有两个跑了几个月的多 agent 项目,Hermes 思路就是从里面抽出来的:
 
-Hermes unlocks multi-agent systems.
+### 📊 [PPTFlux](https://github.com/wilingna/PPTFlux)——4 个 Agent 把乱资料变成可演示 PPT
+4 个 Agent 之间塞了三道 Hermes:
+- 资料理解 → **Hermes** → 结构架构(只传"判断",不传原文)
+- 结构架构 → **Hermes** → 表达升级(强约束:每页 ≤ 60 字)
+- 表达升级 → **Hermes** → HTML 渲染(锁死字段,防止 agent 自由发挥)
+
+没有这三道 Hermes,4 个 Agent 跑出来的 PPT 漏页、错位、重复——全是 handoff 没做好导致的。
+
+### 🤖 [ai-content-pipeline (FLUX)](https://github.com/wilingna/ai-content-pipeline)——7 个 Agent 自动跑内容生产
+每个 Agent 之间都是独立 API 调用 + JSON 字段 handoff,本质上每一次 handoff 都是一个 Hermes:
+`01_trend.json → 02_topic.json → ... → 07_publish.json`
+
+这个 repo 里的 `runs/<timestamp>/*.json` 就是 Hermes 落地的"物证"——每一个 JSON 都是一次结构化转交。
 
 ---
+
+## 🎯 一句话总结
+
+> AI 不是被生成能力限制的,是被**协作能力**限制的。
+> Hermes 解决的就是协作那一层。
+
+---
+
+## 📦 同系列项目
+
+- 🏭 [ai-content-pipeline](https://github.com/wilingna/ai-content-pipeline) — 7 Agent 自动跑内容生产
+- 📊 [PPTFlux](https://github.com/wilingna/PPTFlux) — 4 Agent 把乱资料变成可演示 PPT
+- 🧠 [ai-decision-5steps](https://github.com/wilingna/ai-decision-5steps) — 5 个 AI 工具做高质量决策
+- 🛠 [ai-ppt-toolkit](https://github.com/wilingna/ai-ppt-toolkit) — 三件套做 PPT 完整工作流(49 ⭐)
 
 ## 🔓 License
 
-MIT
+MIT — 自由使用、修改、分发,注明来源即可。
+
+## ⭐ 如果对你有启发
+
+Star 一下,然后去你正在做的某个 AI 工作流里,试着加一道 Hermes。
+你大概率会感觉到"咦,稳定多了"。
