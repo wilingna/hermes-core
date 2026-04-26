@@ -137,13 +137,25 @@ Hermes 不是替代品,是**正交的一层**。
 
 我自己有两个跑了几个月的多 agent 项目,Hermes 思路就是从里面抽出来的:
 
-### 📊 [PPTFlux](https://github.com/wilingna/PPTFlux)——4 个 Agent 把乱资料变成可演示 PPT
-4 个 Agent 之间塞了三道 Hermes:
-- 资料理解 → **Hermes** → 结构架构(只传"判断",不传原文)
-- 结构架构 → **Hermes** → 表达升级(强约束:每页 ≤ 60 字)
-- 表达升级 → **Hermes** → HTML 渲染(锁死字段,防止 agent 自由发挥)
+### 📊 [PPTFlux](https://github.com/wilingna/PPTFlux)——4 Agent 把乱资料变成可演示 PPT
 
-没有这三道 Hermes,4 个 Agent 跑出来的 PPT 漏页、错位、重复——全是 handoff 没做好导致的。
+代码里实际跑的 4 个 Agent:
+**Agent 1 · 资料理解 → Agent 2 · 结构大纲 → Agent 3 · PPT 内容 → Agent 4 · HTML 渲染**
+
+每两个 Agent 之间都有一道 Hermes 风格的转交:
+
+- **Agent 1 → Agent 2**:只把"资料理解结果"打包传过去,原始资料不再透传,避免下游 agent 重新做一遍判断
+- **Agent 2 → Agent 3**:把"结构大纲"作为主输入,资料理解标注成"仅供参考,不要重复",这是典型的 **加约束 + 防止内容漂移**
+- **Agent 3 → Agent 4**:这一道是整个项目里 Hermes 含量最高的一段——不是单纯传文本,而是**结构化转交 + 工程化兜底**:
+  - `sanitizeAgentSlide()` 清洗 Agent 4 的 HTML(去重复签名、修破损 section)
+  - `slotMap` 用 page id 给每页寻址,处理 Agent 4 错位/漏页
+  - `isValidSlideHtml()` 校验"是不是真的渲染出内容"(catch `<section></section>` 这种空壳)
+  - `retrySinglePage()` 单页重试
+  - `buildLocalSlide()` 本地兜底
+
+换句话说:**Agent 3 → Agent 4 之间不是一个 prompt,是一整层"翻译 + 校验 + 重试"的中间件**。这就是把 Hermes 从一段 prompt 升级成"工程化中间层"长什么样。
+
+如果你怀疑"Hermes 只是噱头",看 PPTFlux 的 `sanitizeAgentSlide / slotMap / retrySinglePage` 这几个函数,就知道为什么没有 Hermes 这一层,4 Agent 流水线根本跑不稳。
 
 ### 🤖 [ai-content-pipeline (FLUX)](https://github.com/wilingna/ai-content-pipeline)——7 个 Agent 自动跑内容生产
 每个 Agent 之间都是独立 API 调用 + JSON 字段 handoff,本质上每一次 handoff 都是一个 Hermes:
